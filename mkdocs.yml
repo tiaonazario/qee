@@ -1,0 +1,22 @@
+site_name: Qualidade de Energia Elétrica
+repo_url: https://github.com/tiaonazario/qee
+repo_name: tiaonazario/qee
+edit_uri: tree/main/docs
+
+theme:
+  name: material
+  language: pt-BR
+  logo: assets/logo.png
+  favicon: assets/logo.png
+
+markdown_extensions:
+  - attr_list
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [qee, qee/classes, qee/collections, qee/functions]
