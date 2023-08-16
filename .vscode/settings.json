@@ -8,5 +8,16 @@
         "**/Thumbs.db": true,
         "**/__pycache__": true
     },
-    "cSpell.words": [],
+    "cSpell.words": [
+        "axhline",
+        "axhspan",
+        "eusd",
+        "facecolor",
+        "linestyle",
+        "matplotlib",
+        "prodist",
+        "PRODIST",
+        "pyplot",
+        "savefig"
+    ],
 }
