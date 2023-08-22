@@ -1,8 +1,8 @@
 """Define os valores de tensão permitidos"""
-from enum import Enum
+from enum import IntEnum
 
 
-class VoltageType(Enum):
+class VoltageValue(IntEnum):
     """
     Define os nomes e valores para as respectivas tensões permitidas
 

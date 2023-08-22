@@ -1,9 +1,9 @@
 """Define os valores de níveis de tensão"""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class VoltageLevel(Enum):
+class VoltageLevel(StrEnum):
     """
     Define os nomes e valores para as respectivos níveis de tensão
 
