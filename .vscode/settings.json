@@ -20,4 +20,21 @@
         "pyplot",
         "savefig"
     ],
+    // black formatter
+    "black-formatter.args": [
+        "--line-length",
+        "79",
+    ],
+    // flake8 extension
+    "flake8.args": [
+        "--disable=F401"
+    ],
+    // pylint extension
+    "pylint.args": [
+        "--disable=C0114",
+        "--disable=E0401",
+        "--disable=E1136", // unsubscriptable-object
+    ],
+    // dicstringFormat
+    "autoDocstring.docstringFormat": "numpy",
 }

@@ -6,8 +6,9 @@ edit_uri: tree/main/docs
 theme:
   name: material
   language: pt-BR
-  logo: assets/logo.png
-  favicon: assets/logo.png
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  locale: pt_BR
 
 markdown_extensions:
   - attr_list
@@ -19,4 +20,4 @@ plugins:
 - mkdocstrings:
     handlers:
       python:
-        paths: [qee, qee/classes, qee/collections, qee/functions]
+        paths: [qee, qee/classes, qee/enums, qee/functions]
