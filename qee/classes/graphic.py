@@ -8,11 +8,11 @@ from matplotlib.pyplot import show as plt_show
 from matplotlib.pyplot import subplots
 
 from qee.classes.prodist import PRODIST
-from qee.enums.voltage_level import VoltageLevel
+from qee.enums.voltage_type import VoltageType
 from qee.enums.voltage_value import VoltageValue
 
 
-class Graph:
+class Graphic:
     """
     Gera gráficos com valores fornecidos
 
@@ -45,42 +45,42 @@ class Graph:
         """
 
         prodist = PRODIST()
-        cr_sup: int = prodist.get_voltage_range(reference)['cr-sup']
-        ad_sup: int = prodist.get_voltage_range(reference)['ad-sup']
-        ad_inf: int = prodist.get_voltage_range(reference)['ad-inf']
-        cr_inf: int = prodist.get_voltage_range(reference)['cr-inf']
+        cr_sup: int = prodist.get_voltage_range(reference)["cr-sup"]
+        ad_sup: int = prodist.get_voltage_range(reference)["ad-sup"]
+        ad_inf: int = prodist.get_voltage_range(reference)["ad-inf"]
+        cr_inf: int = prodist.get_voltage_range(reference)["cr-inf"]
 
         self.axs.axhline(
             y=cr_sup,
-            color='r',
-            linestyle='--',
-            label=VoltageLevel.CRITICAL.value,
+            color="r",
+            linestyle="--",
+            label=VoltageType.CRITICAL.value,
         )
         # self.axs.axhline(y=ad_sup, color="y", linestyle="--")
-        self.axs.axhline(y=reference.value, color='g', linestyle='--')
+        self.axs.axhline(y=reference.value, color="g", linestyle="--")
         # self.axs.axhline(y=ad_inf, color="y", linestyle="--")
-        self.axs.axhline(y=cr_inf, color='r', linestyle='--')
+        self.axs.axhline(y=cr_inf, color="r", linestyle="--")
 
         self.axs.axhspan(
             ad_sup,
             cr_sup,
-            facecolor='yellow',
+            facecolor="yellow",
             alpha=0.5,
-            label=VoltageLevel.PRECARIOUS.value,
+            label=VoltageType.PRECARIOUS.value,
         )
         self.axs.axhspan(
             ad_inf,
             ad_sup,
-            facecolor='green',
+            facecolor="green",
             alpha=0.5,
-            label=VoltageLevel.ADEQUATE.value,
+            label=VoltageType.ADEQUATE.value,
         )
-        self.axs.axhspan(cr_inf, ad_inf, facecolor='yellow', alpha=0.5)
+        self.axs.axhspan(cr_inf, ad_inf, facecolor="yellow", alpha=0.5)
 
         # set legends
         # self.axs.legend(loc="upper right")
 
-    def save(self, path: str, image_format: str = 'svg') -> None:
+    def save(self, path: str, image_format: str = "svg") -> None:
         """
         Salva o gráfico
 

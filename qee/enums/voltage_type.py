@@ -3,7 +3,7 @@
 from enum import StrEnum
 
 
-class VoltageLevel(StrEnum):
+class VoltageType(StrEnum):
     """
     Define os nomes e valores para as respectivos níveis de tensão
 
@@ -12,6 +12,6 @@ class VoltageLevel(StrEnum):
     - PRECARIOUS: Nível de tensão precária.
     """
 
-    CRITICAL = 'Crítica'
-    ADEQUATE = 'Adequada'
-    PRECARIOUS = 'Precária'
+    CRITICAL = "Crítica"
+    ADEQUATE = "Adequada"
+    PRECARIOUS = "Precária"

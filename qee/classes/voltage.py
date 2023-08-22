@@ -3,7 +3,7 @@ Define a classe para tensão
 """
 
 from qee.classes.prodist import PRODIST
-from qee.enums.voltage_level import VoltageLevel
+from qee.enums.voltage_type import VoltageType
 from qee.enums.voltage_value import VoltageValue
 
 
@@ -45,9 +45,7 @@ class Voltage:
     def __init__(self) -> None:
         self.__nl = NL()
 
-    def classify(
-        self, voltage: float, reference: VoltageValue
-    ) -> VoltageLevel:
+    def classify(self, voltage: float, reference: VoltageValue) -> VoltageType:
         """
         Classifica a tensão em Critica, Precária ou Adequada.
 
@@ -56,29 +54,29 @@ class Voltage:
             reference: Tensão de referência para classificação
 
         Returns:
-            VoltageLevel: Classificação da tensão
+            VoltageType: Classificação da tensão
 
         Examples:
             >>> voltage = Voltage(220)
 
             >>> voltage.classify(250)
-            VoltageLevel.CRITICAL
+            VoltageType.CRITICAL
 
             >>> voltage.classify(220)
-            VoltageLevel.ADEQUATE
+            VoltageType.ADEQUATE
 
             >>> voltage.classify(190)
-            VoltageLevel.PRECARIOUS
+            VoltageType.PRECARIOUS
         """
 
         variation: dict[str, int] = PRODIST().get_voltage_range(reference)
 
-        if voltage < variation['cr-inf'] or voltage > variation['cr-sup']:
-            return VoltageLevel.CRITICAL
-        if variation['ad-inf'] < voltage < variation['ad-sup']:
-            return VoltageLevel.ADEQUATE
+        if voltage < variation["cr-inf"] or voltage > variation["cr-sup"]:
+            return VoltageType.CRITICAL
+        if variation["ad-inf"] < voltage < variation["ad-sup"]:
+            return VoltageType.ADEQUATE
 
-        return VoltageLevel.PRECARIOUS
+        return VoltageType.PRECARIOUS
 
     def reading_number(
         self, voltages: list[float], reference: VoltageValue
@@ -107,15 +105,15 @@ class Voltage:
 
         if len(voltages) != 1008:
             raise ValueError(
-                'Quantidade de leituras inválida, forneça 1008 valores de tensões lidas'
+                "Quantidade de leituras inválida, forneça 1008 valores de tensões lidas"
             )
 
         for voltage in voltages:
-            instance_voltage: VoltageLevel = self.classify(voltage, reference)
+            instance_voltage: VoltageType = self.classify(voltage, reference)
 
-            if instance_voltage == VoltageLevel.ADEQUATE:
+            if instance_voltage == VoltageType.ADEQUATE:
                 self.__nl.nla += 1
-            elif instance_voltage == VoltageLevel.PRECARIOUS:
+            elif instance_voltage == VoltageType.PRECARIOUS:
                 self.__nl.nlp += 1
             else:
                 self.__nl.nlc += 1
