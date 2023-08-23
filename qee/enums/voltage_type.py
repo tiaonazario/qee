@@ -12,6 +12,6 @@ class VoltageType(StrEnum):
     - PRECARIOUS: Nível de tensão precária.
     """
 
-    CRITICAL = "Crítica"
-    ADEQUATE = "Adequada"
-    PRECARIOUS = "Precária"
+    CRITICAL = 'Crítica'
+    ADEQUATE = 'Adequada'
+    PRECARIOUS = 'Precária'

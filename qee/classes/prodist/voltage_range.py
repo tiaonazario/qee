@@ -1,17 +1,22 @@
-"""Esse modulo define a classe PRODIST"""
+"""
+Módulo 8
+
+Esse módulo contém as definições e padrões definidos pelo PRODIST para classificação de QEE
+(Qualidade de Energia Elétrica)
+"""
 
 from qee.enums.voltage_value import VoltageValue
 
 
-class PRODIST:
+class VoltageRange:
     """
-    Define faixa de variação de tensão de leitura fornecida pelo PRODIST
+    Define os parâmetros referente ao módulo 8 do PRODIST
     """
 
     def __init__(self) -> None:
-        self._vvr: dict[int, dict[str, int]] = self.voltage_ranges()
+        self.__vr: dict[int, dict[str, int]] = self.get_all()
 
-    def voltage_ranges(self) -> dict[int, dict[str, int]]:
+    def get_all(self) -> dict[int, dict[str, int]]:
         """
         Define faixa de variação de tensão de leitura fornecida pelo PRODIST
 
@@ -88,7 +93,7 @@ class PRODIST:
             },
         }
 
-    def get_voltage_range(self, voltage_type: VoltageValue) -> dict[str, int]:
+    def get_one(self, voltage_value: VoltageValue) -> dict[str, int]:
         """
         Determina a Faixa de Variação da Tensão de Leitura
 
@@ -106,4 +111,4 @@ class PRODIST:
             {'cr-sup': 127, 'ad-sup': 126, 'ad-inf': 110, 'cr-inf': 104 }
         """
 
-        return self._vvr[voltage_type.value]
+        return self.__vr[voltage_value.value]

@@ -7,9 +7,9 @@ from qee.classes import Harmonic, Voltage
 from qee.enums import VoltageValue
 from qee.functions import harmonics_cols
 
-VOLTAGE_FILE_NAME = './.data/202304110900_202305011720_6_ET-5061C_tensao.csv'
+VOLTAGE_FILE_NAME = './data/202304110900_202305011720_6_ET-5061C_tensao.csv'
 HARMONIC_FILE_NAME = (
-    './.data/202304110900_202305011720_6_ET-5061C_harmonico.csv'
+    './data/202304110900_202305011720_6_ET-5061C_harmonico.csv'
 )
 
 voltage_file = pd.read_csv(VOLTAGE_FILE_NAME, sep=';')
