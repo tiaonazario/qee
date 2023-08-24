@@ -4,7 +4,7 @@ Define a classe para tensão
 
 from typing import Literal
 
-from qee.classes.prodist import DRT, NLT, VoltageRange
+from qee.classes.prodist import DRT, NLT, VoltageIndicators, VoltageRange
 from qee.enums.consumer_type import ConsumerType
 from qee.enums.voltage_type import VoltageType
 from qee.enums.voltage_value import VoltageValue
@@ -17,10 +17,6 @@ class Voltage:
     Examples:
         >>> voltage = Voltage()
     """
-
-    def __init__(self) -> None:
-        self.__nlt = NLT()
-        self.__drt = DRT()
 
     def classify(self, voltage: float, reference: VoltageValue) -> VoltageType:
         """
@@ -48,9 +44,9 @@ class Voltage:
 
         variation: dict[str, int] = VoltageRange().get_one(reference)
 
-        if voltage < variation["cr-inf"] or voltage > variation["cr-sup"]:
+        if voltage < variation['cr-inf'] or voltage > variation['cr-sup']:
             return VoltageType.CRITICAL
-        if variation["ad-inf"] < voltage < variation["ad-sup"]:
+        if variation['ad-inf'] < voltage < variation['ad-sup']:
             return VoltageType.ADEQUATE
 
         return VoltageType.PRECARIOUS
@@ -76,75 +72,107 @@ class Voltage:
 
         Examples:
             >>> voltage = Voltage()
-            >>> reading_number = voltage.reading_number([220, 250, 190], 220)
+            >>> reading_number = voltage.reading_number([220, 250, 190 ...], 220)
             {"nla": 1, "nlp": 1, "nlc": 1}
         """
 
         if len(voltages) != 1008:
             raise ValueError(
-                "Quantidade de leituras inválida, forneça 1008 valores de tensões lidas"
+                'Quantidade de leituras inválida, forneça 1008 valores de tensões lidas'
             )
 
+        nla = 0
+        nlp = 0
+        nlc = 0
         for voltage in voltages:
             instance_voltage: VoltageType = self.classify(voltage, reference)
 
             if instance_voltage == VoltageType.ADEQUATE:
-                self.__nlt.nla += 1
+                nla += 1
             elif instance_voltage == VoltageType.PRECARIOUS:
-                self.__nlt.nlp += 1
+                nlp += 1
             else:
-                self.__nlt.nlc += 1
+                nlc += 1
 
-        return self.__nlt
+        nlt = NLT(nla, nlp, nlc)
 
-    def relative_duration_transgress(self) -> DRT:
+        return nlt
+
+    def relative_duration_transgress(self, nlp: int, nlc: int) -> DRT:
         """
         Calcula a duração relativa da transgressão, para Tensão Precária e Crítica
+
+        Parameters:
+            nlp: Número de leituras precárias
+            nlc: Número de leituras críticas
 
         Returns:
             DRT: Duração relativa da transgressão, para Tensão Precária e Crítica
 
         Examples:
             >>> voltage = Voltage()
-            >>> voltage.reading_number([220, 250, 190], 220)
-            {"nla": 1, "nlp": 1, "nlc": 1}
-
-            >>> voltage = Voltage()
-            >>> voltage.reading_number([220, 250, 190], 220)
-            >>> voltage.relative_duration_transgress()
-            {"drp": 1.00%, "drc": 1.00%}
+            >>> voltage.relative_duration_transgress(86, 24)
+            {drp: 1.00%, drc: 1.00%}
         """
 
-        self.__drt.drp = (self.__nlt.nlp / 1008) * 100
-        self.__drt.drc = (self.__nlt.nlc / 1008) * 100
+        drp: float = (nlp / 1008) * 100
+        drc: float = (nlc / 1008) * 100
+        drt = DRT(drp, drc)
 
-        return self.__drt
+        return drt
 
-    def compensation(self, consumer: ConsumerType, eusd: float):
+    def indicators(
+        self, voltages: list[float], reference: VoltageValue
+    ) -> VoltageIndicators:
+        nlt: NLT = self.reading_number(voltages, reference)
+        drt: DRT = self.relative_duration_transgress(nlt.nlp, nlt.nlc)
+        voltage_indicators: VoltageIndicators = VoltageIndicators(nlt, drt)
+        return voltage_indicators
+
+    def compensation(
+        self,
+        drp: float,
+        drc: float,
+        eusd: float,
+        consumer: ConsumerType = ConsumerType.BT,
+    ) -> float:
         """
         Calcula a compensação de tensão
 
         Parameters:
-            consumer: tipo de consumidor
+            drp: Duração relativa da transgressão, para Tensão Precária
+            drc: Duração relativa da transgressão, para Tensão Crítica
             eusd: Encargo de Uso do Sistema de Distribuição (EUSD)
+            consumer: tipo de consumidor
+
+        Returns:
+            float: compensação de tensão
+
+        Notes:
+            Atenção: A quantidade de leituras deve ser igual a 1008
+
+        Examples:
+            >>> voltage = Voltage()
+            >>> compensation: float = voltage.compensation(1, 1, 1)
         """
 
-        drp_limit: float = self.__drt.drp_limit()
-        drc_limit: float = self.__drt.drc_limit()
+        drt = DRT()
+        drp_limit: float = drt.drp_limit()
+        drc_limit: float = drt.drc_limit()
 
-        const_k1: Literal[3, 0] = 3 if self.__drt.drp > drp_limit else 0
+        const_k1: Literal[3, 0] = 3 if drp > drp_limit else 0
 
         const_k2: int = 0
-        if self.__drt.drc <= drc_limit:
+        if drc <= drc_limit:
             const_k2 = 0
-        elif self.__drt.drc > drc_limit and consumer == ConsumerType.BT:
+        elif drc > drc_limit and consumer == ConsumerType.BT:
             const_k2 = 7
-        elif self.__drt.drc > drc_limit and consumer == ConsumerType.MT:
+        elif drc > drc_limit and consumer == ConsumerType.MT:
             const_k2 = 5
-        elif self.__drt.drc > drc_limit and consumer == ConsumerType.AT:
+        elif drc > drc_limit and consumer == ConsumerType.AT:
             const_k2 = 3
 
         return (
-            ((self.__drt.drp - drp_limit) / (100) * const_k1)
-            + ((self.__drt.drc - drc_limit) / (100) * const_k2)
+            ((drp - drp_limit) / (100) * const_k1)
+            + ((drc - drc_limit) / (100) * const_k2)
         ) * eusd

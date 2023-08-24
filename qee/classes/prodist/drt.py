@@ -31,4 +31,4 @@ class DRT:
         return 0.5
 
     def __str__(self) -> str:
-        return f'{{"drp": {self.drp:.2f}, "drc": {self.drc:.2f}}}'
+        return f'{{drp: {self.drp:.2f}%, drc: {self.drc:.2f}%}}'
