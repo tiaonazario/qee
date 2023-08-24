@@ -60,7 +60,6 @@ def test_voltage_indicators() -> None:
     voltage = Voltage()
     voltage_indicators = voltage.indicators(voltages_list, VoltageValue.V220)
 
-    print(voltage_indicators)
     assert voltage_indicators
 
 
