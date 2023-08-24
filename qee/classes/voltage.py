@@ -124,6 +124,24 @@ class Voltage:
     def indicators(
         self, voltages: list[float], reference: VoltageValue
     ) -> VoltageIndicators:
+        """
+        Calcula os indicadores de tensão
+
+        Parameters:
+            voltages: Lista com valores de tensão lidas
+            reference: Tensão de referência para classificação
+
+        Returns:
+            VoltageIndicators: Indicadores de tensão
+
+
+        Examples:
+            >>> voltage = Voltage()
+            >>> indicators = voltage.indicators([220, 250, 190 ...], 220)
+            >>> print(indicators)
+            {nla: 1, nlp: 1, nlc: 1}, drp: 1.00%, drc: 1.00%}
+        """
+
         nlt: NLT = self.reading_number(voltages, reference)
         drt: DRT = self.relative_duration_transgress(nlt.nlp, nlt.nlc)
         voltage_indicators: VoltageIndicators = VoltageIndicators(nlt, drt)

@@ -8,7 +8,7 @@ from qee.classes import Voltage
 from qee.enums import ConsumerType, VoltageType, VoltageValue
 
 VOLTAGE_FILE_NAME = './data/202304110900_202305011720_6_ET-5061C_tensao.csv'
-data_frame = pd.read_csv(VOLTAGE_FILE_NAME, sep=';')
+data_frame: pd.DataFrame = pd.read_csv(VOLTAGE_FILE_NAME, sep=';')
 
 voltages_list: list[float] = data_frame['V1_Avg [V]'].head(1008).to_list()
 
@@ -60,6 +60,7 @@ def test_voltage_indicators() -> None:
     voltage = Voltage()
     voltage_indicators = voltage.indicators(voltages_list, VoltageValue.V220)
 
+    print(voltage_indicators)
     assert voltage_indicators
 
 
