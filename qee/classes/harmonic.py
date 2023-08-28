@@ -31,7 +31,7 @@ class Harmonic:
         self, voltages_h: list[float], fundamental_voltage: float
     ) -> None:
         self.voltages_h: list[float] = voltages_h
-        self.fundamental_voltage: float = fundamental_voltage
+        self.fundamental_voltage: float = abs(fundamental_voltage)
 
     def dit_h(self, voltage_h: float) -> float:
         """
@@ -64,11 +64,13 @@ class Harmonic:
             0.6
         """
 
-        sum_: float = 0
-        for voltage_h in self.voltages_h:
-            sum_ += voltage_h**2
+        summation: float = 0
+        for index, voltage_h in enumerate(self.voltages_h):
+            order: int = index + 1
+            if order >= 2:
+                summation += voltage_h**2
 
-        return self.dit_h(sum_)
+        return self.dit_h(summation ** (1 / 2))
 
     def dtt_p(self) -> float:
         """
@@ -83,12 +85,13 @@ class Harmonic:
             0.4
         """
 
-        sum_: float = 0
-        for i, voltage_h in enumerate(self.voltages_h):
-            if i % 2 == 0 and i % 3 != 0:
-                sum_ += voltage_h**2
+        summation: float = 0
+        for index, voltage_h in enumerate(self.voltages_h):
+            order: int = index + 1
+            if order % 2 == 0 and order % 3 != 0:
+                summation += voltage_h**2
 
-        return self.dit_h(sum_)
+        return self.dit_h(summation ** (1 / 2))
 
     def dtt_i(self) -> float:
         """
@@ -103,12 +106,13 @@ class Harmonic:
             0.4
         """
 
-        sum_: float = 0
-        for i, voltage_h in enumerate(self.voltages_h):
-            if i % 2 != 0 and i % 3 != 0:
-                sum_ += voltage_h**2
+        summation: float = 0
+        for index, voltage_h in enumerate(self.voltages_h):
+            order: int = index + 1
+            if order >= 5 and order % 2 != 0 and order % 3 != 0:
+                summation += voltage_h**2
 
-        return self.dit_h(sum_)
+        return self.dit_h(summation ** (1 / 2))
 
     def dtt_3(self) -> float:
         """
@@ -123,9 +127,10 @@ class Harmonic:
             0.4
         """
 
-        sum_: float = 0
-        for i, voltage_h in enumerate(self.voltages_h):
-            if i % 3 == 0:
-                sum_ += voltage_h**2
+        summation: float = 0
+        for index, voltage_h in enumerate(self.voltages_h):
+            order: int = index + 1
+            if order % 3 == 0:
+                summation += voltage_h**2
 
-        return self.dit_h(sum_)
+        return self.dit_h(summation ** (1 / 2))
