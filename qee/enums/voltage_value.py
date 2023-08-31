@@ -1,7 +1,8 @@
 """Define os valores de tensão permitidos"""
-from enum import IntEnum
+from enum import IntEnum, unique
 
 
+@unique
 class VoltageValue(IntEnum):
     """
     Define os nomes e valores para as respectivas tensões permitidas

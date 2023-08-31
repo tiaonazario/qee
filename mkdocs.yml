@@ -20,4 +20,4 @@ plugins:
 - mkdocstrings:
     handlers:
       python:
-        paths: [qee, qee/classes, qee/enums, qee/functions]
+        paths: [qee, qee/prodist]

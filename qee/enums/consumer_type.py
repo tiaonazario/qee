@@ -1,8 +1,9 @@
 """Define a classificação do tipo de consumidor"""
 
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class ConsumerType(Enum):
     """
     Determina o tipo de consumidor atribuindo um nome e um valor
@@ -12,6 +13,6 @@ class ConsumerType(Enum):
     - AT: Consumidor de Alta Tensão
     """
 
-    BT = 'Baixa Tensão'
-    MT = 'Média Tensão'
-    AT = 'Alta Tensão'
+    BT = "Baixa Tensão"
+    MT = "Média Tensão"
+    AT = "Alta Tensão"
