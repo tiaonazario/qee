@@ -1,7 +1,3 @@
-"""Classe para geração de gráficos"""
-# pyright: reportUnknownVariableType=none
-# pyright: reportUnknownMemberType=none
-
 from matplotlib.figure import Figure
 from matplotlib.pyplot import Axes, savefig, figure, gca
 from matplotlib.pyplot import show as plt_show
@@ -23,7 +19,7 @@ class Graphic:
         self.y_values: list[float] = y_values
 
         # plot: tuple[Figure, Axes] = subplots()
-        self.figure: Figure = figure(figsize=(8, 4.5))
+        self.figure: Figure = figure(figsize=(16, 9))
         self.axes: Axes = gca()
 
         self.axes.plot(self.x_values, self.y_values)
@@ -75,7 +71,7 @@ class Graphic:
         Salva o gráfico como uma imagem
         """
 
-        return savefig(path, format=get_file_extension(path))
+        return savefig(path, format=get_file_extension(path), transparent=True)
 
     def show(self) -> None:
         """

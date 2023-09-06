@@ -6,7 +6,12 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "**/__pycache__": true
+        "**/__pycache__": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true,
+        "**/.venv": true,
+        "**/htmlcov": true,
+        "**/.coverage": true,
     },
     "cSpell.words": [
         "axhline",
@@ -14,15 +19,45 @@
         "eusd",
         "facecolor",
         "figsize",
+        "FONTNAME",
         "iterrows",
         "linestyle",
         "marp",
         "matplotlib",
+        "pagesizes",
         "prodist",
         "PRODIST",
         "pyplot",
-        "savefig"
+        "reportlab",
+        "savefig",
+        "svglib",
+        "TEXTCOLOR"
     ],
+    // python extension
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.typeCheckingMode": "strict",
+    "python.languageServer": "Pylance",
+    "python.analysis.ignore": [
+        "**\\__init__.py"
+    ],
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportUnknownVariableType": "none",
+        "reportMissingTypeStubs": "none",
+        "reportUnknownMemberType": "none",
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.formatOnType": true,
+        "editor.wordBasedSuggestions": false,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true,
+        },
+    },
     // black formatter
     "black-formatter.args": [
         "--line-length",

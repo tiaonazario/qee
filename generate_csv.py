@@ -1,12 +1,7 @@
-# pyright: reportUnknownVariableType=none
-# pyright: reportUnknownMemberType=none
-
 import pandas as pd
 
-df_h = pd.read_excel('./data/tensao.xls').head(1008)
-df_v = pd.read_excel('./data/harmonico.xls').head(1008)
-data_frame = pd.merge(df_h, df_v, on='Time')
-# print(data_frame)
-# data_frame.to_csv("data/data.csv", sep=";", index=False)
-# df_h.to_csv("data/data_h.csv", sep=";", index=False)
-# df_v.to_csv("data/data_v.csv", sep=";", index=False)
+data = pd.read_csv("data/csv/data.csv", sep=";")
+new_data = data[["V1_Avg [V]", "V2_Avg [V]", "V3_Avg [V]"]]
+series = new_data.values.tolist()
+
+print(series)

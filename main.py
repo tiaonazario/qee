@@ -1,6 +1,3 @@
-# pyright: reportUnknownVariableType=none
-# pyright: reportUnknownMemberType=none
-
 from pandas import read_csv
 
 from qee import Analysis
@@ -12,7 +9,9 @@ data = read_csv("data/csv/data.csv", sep=";")
 
 TIME_LABEL = "Time"
 vf_labels = ["V1_Avg [V]", "V2_Avg [V]", "V3_Avg [V]"]
+# vf_labels = ["V1_Min [V]", "V2_Min [V]", "V3_Min [V]"]
 vl_labels = ["V12_Avg [V]", "V23_Avg [V]", "V31_Avg [V]"]
+# vl_labels = ["V12_Min [V]", "V23_Min [V]", "V31_Min [V]"]
 voltage_labels = ["V1", "V2", "V3"]
 
 analysis = Analysis(data)

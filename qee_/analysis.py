@@ -1,6 +1,3 @@
-# pyright: reportUnknownVariableType=none
-# pyright: reportUnknownMemberType=none
-
 from pandas import DataFrame, Series
 
 from numpy import percentile
