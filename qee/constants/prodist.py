@@ -8,6 +8,8 @@ DTT_3_95 = 6.5
 
 FD_LIMIT = 3.0
 
+FREQUENCY_LIMIT = [59.9, 60.1]
+
 VOLTAGE_RANGE: dict[int, dict[str, int]] = {
     110: {
         'cr-sup': 117,

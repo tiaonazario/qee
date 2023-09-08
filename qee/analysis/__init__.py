@@ -4,13 +4,14 @@ import numpy as np
 import pandas as pd
 from tabulate import tabulate
 
+from qee.analysis.frequency import Frequency
 from qee.analysis.graphic import Graphic
 from qee.analysis.harmonics import Harmonics
 from qee.analysis.voltage import Voltage
 from qee.analysis.voltage_imbalance import VoltageImbalance
 from qee.analysis.voltage_variation import VoltageVariation
 from qee.constants import prodist
-from qee.enums import VoltageClassify, VoltageValue
+from qee.enums import FrequencyClassify, VoltageClassify, VoltageValue
 from qee.pdf import PDF
 
 
@@ -29,7 +30,7 @@ class Analysis:
         print('Tabela construída com sucesso!')
 
     def graphic_voltage(
-        self, voltages: List[Tuple[str, VoltageValue]]
+        self, voltages: List[Tuple[str, VoltageValue]], extension: str = 'png'
     ) -> None:
         """Gera o gráfico para as tensões"""
 
@@ -41,7 +42,7 @@ class Analysis:
 
             y_axis: list[float] = self.data[label].to_list()
 
-            filename = f"{label.replace(' ', '_')}.png"
+            filename = f"{label.replace(' ', '_')}.{extension}"
 
             graphic = Graphic(x_axis, y_axis)
             graphic.voltage(reference)
@@ -236,3 +237,50 @@ class Analysis:
             )
             self.pdf.add(table)
             self.pdf.add_spacer()
+
+    def frequency_variation(
+        self, label: str, print_table: bool = True, pdf_table: bool = False
+    ):
+        """Calcula a variação de frequência"""
+
+        frequencies: list[float] = self.data[label].to_list()
+
+        amount_low = 0
+        amount_high = 0
+        amount_adequate = 0
+        for frequency in frequencies:
+            classify = Frequency(frequency).classify()
+            if classify == FrequencyClassify.ADEQUATE:
+                amount_adequate += 1
+            elif classify == FrequencyClassify.LOW:
+                amount_low += 1
+            else:
+                amount_high += 1
+
+        if print_table:
+            print('Variação de frequência'.center(40))
+            data = {
+                'Classificação': [
+                    FrequencyClassify.LOW.value,
+                    FrequencyClassify.HIGH.value,
+                    FrequencyClassify.ADEQUATE.value,
+                ],
+                'Quantidade': [
+                    str(amount_low),
+                    str(amount_high),
+                    str(amount_adequate),
+                ],
+            }
+            print(tabulate(data, headers='keys', tablefmt='fancy_grid'))
+
+        if pdf_table:
+            self.pdf.add_subtitle('Variação de frequência')
+            table = self.pdf.create_table(
+                ['Classificação', 'Quantidade'],
+                [
+                    [FrequencyClassify.LOW.value, str(amount_low)],
+                    [FrequencyClassify.HIGH.value, str(amount_high)],
+                    [FrequencyClassify.ADEQUATE.value, str(amount_adequate)],
+                ],
+            )
+            self.pdf.add(table)

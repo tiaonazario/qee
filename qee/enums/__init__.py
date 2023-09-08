@@ -18,8 +18,16 @@ class VoltageValue(Enum):
 
 
 class VoltageClassify(Enum):
-    """Define os nomes e valores para as tensões permitidas"""
+    """Define os nomes e valores para classificação das tensões"""
 
-    CRITICAL = 'Crítica'
     ADEQUATE = 'Adequada'
     PRECARIOUS = 'Precária'
+    CRITICAL = 'Crítica'
+
+
+class FrequencyClassify(Enum):
+    """Define os nomes e valores para classificação das frequências"""
+
+    ADEQUATE = 'Adequada'
+    LOW = 'Baixa'
+    HIGH = 'Alta'
