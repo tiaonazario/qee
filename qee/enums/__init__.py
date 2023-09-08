@@ -20,6 +20,6 @@ class VoltageValue(Enum):
 class VoltageClassify(Enum):
     """Define os nomes e valores para as tensões permitidas"""
 
-    CRITICAL = "Crítica"
-    ADEQUATE = "Adequada"
-    PRECARIOUS = "Precária"
+    CRITICAL = 'Crítica'
+    ADEQUATE = 'Adequada'
+    PRECARIOUS = 'Precária'

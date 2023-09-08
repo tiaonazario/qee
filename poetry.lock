@@ -1572,6 +1572,23 @@ pycairo = ["freetype-py (>=2.3.0,<2.4)", "rlPyCairo (>=0.2.0,<1)"]
 renderpm = ["rl-renderPM (>=4.0.3,<4.1)"]
 
 [[package]]
+name = "reportlab-stubs"
+version = "3.6.9.post0"
+description = "Typing stubs for ReportLab"
+optional = false
+python-versions = "*"
+files = [
+    {file = "reportlab_stubs-3.6.9.post0-py3-none-any.whl", hash = "sha256:2d6ab0d00de8eb44006c5701850bc4eef6d142deff9b08e27c339b15abee3ff7"},
+    {file = "reportlab_stubs-3.6.9.post0.tar.gz", hash = "sha256:12ea185a9411c17255d31bab4e7246367005843a5ab51743ca6594609ae90c05"},
+]
+
+[package.dependencies]
+reportlab = "*"
+
+[package.extras]
+dev = ["black", "flake8", "flake8-black", "flake8-pyi", "mypy", "setuptools", "types-setuptools", "wheel"]
+
+[[package]]
 name = "requests"
 version = "2.31.0"
 description = "Python HTTP for Humans."
@@ -1665,6 +1682,17 @@ python-versions = "*"
 files = [
     {file = "types-pytz-2023.3.0.1.tar.gz", hash = "sha256:1a7b8d4aac70981cfa24478a41eadfcd96a087c986d6f150d77e3ceb3c2bdfab"},
     {file = "types_pytz-2023.3.0.1-py3-none-any.whl", hash = "sha256:65152e872137926bb67a8fe6cc9cfd794365df86650c5d5fdc7b167b0f38892e"},
+]
+
+[[package]]
+name = "types-tabulate"
+version = "0.9.0.3"
+description = "Typing stubs for tabulate"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-tabulate-0.9.0.3.tar.gz", hash = "sha256:197651f9d6467193cd166d8500116a6d3a26f2a4eb2db093bc9535ee1c0be55e"},
+    {file = "types_tabulate-0.9.0.3-py3-none-any.whl", hash = "sha256:462d1b62e01728416e8277614d6a3eb172d53a8efaf04a04a973ff2dd45238f6"},
 ]
 
 [[package]]
@@ -1848,4 +1876,4 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4da5bf7bd761931f95ebfb2eac9cce4190a68a131bde7bc1048d1ac82991b565"
+content-hash = "9b7ebd636dc1a842d8d88871595c1063e169801f7a2c4c13c957de78b03bd2a3"

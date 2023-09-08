@@ -13,10 +13,10 @@ class Harmonics:
     def harmonic_distortion(self) -> list[float]:
         """Calcula as Distorção harmônicas de de tensão"""
 
-        total_sum = 0
-        total_sum_even_not_multiple_3 = 0
-        total_sum_odd_not_multiple_3 = 0
-        total_sum_multiple_3 = 0
+        total_sum: float = 0
+        total_sum_even_not_multiple_3: float = 0
+        total_sum_odd_not_multiple_3: float = 0
+        total_sum_multiple_3: float = 0
 
         for index, voltage in enumerate(self.voltages):
             order = index + 1

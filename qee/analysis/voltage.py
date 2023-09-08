@@ -1,5 +1,5 @@
 from qee.constants import prodist
-from qee.enums import VoltageValue, VoltageClassify
+from qee.enums import VoltageClassify, VoltageValue
 
 
 class Voltage:
@@ -14,9 +14,9 @@ class Voltage:
         voltage_range = prodist.VOLTAGE_RANGE[reference.value]
         value = self.value
 
-        if value < voltage_range["cr-inf"] or value > voltage_range["cr-sup"]:
+        if value < voltage_range['cr-inf'] or value > voltage_range['cr-sup']:
             return VoltageClassify.CRITICAL
-        if voltage_range["ad-inf"] <= self.value <= voltage_range["ad-sup"]:
+        if voltage_range['ad-inf'] <= self.value <= voltage_range['ad-sup']:
             return VoltageClassify.ADEQUATE
 
         return VoltageClassify.PRECARIOUS

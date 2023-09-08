@@ -1,5 +1,8 @@
+from tabulate import tabulate
+
 from qee.analysis.voltage import Voltage
-from qee.enums import VoltageValue, VoltageClassify
+from qee.constants import prodist
+from qee.enums import VoltageClassify, VoltageValue
 
 
 class VoltageVariation:
@@ -8,6 +11,9 @@ class VoltageVariation:
     def __init__(self, voltages: list[float], reference: VoltageValue) -> None:
         self.voltages = voltages
         self.reference = reference
+
+        self.__drp = 0
+        self.__drc = 0
 
     def reading_number(self) -> list[int]:
         """Calcula o número de leituras adequadas, precárias e críticas"""
@@ -33,7 +39,24 @@ class VoltageVariation:
 
         numbers = self.reading_number()
 
-        drp = (numbers[1] / 1008) * 100
-        drc = (numbers[2] / 1008) * 100
+        self.__drp = (numbers[1] / 1008) * 100
+        self.__drc = (numbers[2] / 1008) * 100
 
-        return [drp, drc]
+        return [self.__drp, self.__drc]
+
+    def show(self):
+        """Imprime os indicadores de variação de tensão"""
+
+        print('Variação de tensão'.center(40))
+        data = {
+            'Indicador': ['DRP', 'DRC'],
+            'Obtido': [
+                f'{self.__drp:.2f}%',
+                f'{self.__drc:.2f}%',
+            ],
+            'PRODIST': [
+                f'{prodist.DRP_LIMIT:.2f}%',
+                f'{prodist.DRC_LIMIT:.2f}%',
+            ],
+        }
+        print(tabulate(data, headers='keys', tablefmt='fancy_grid'))

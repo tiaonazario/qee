@@ -1,66 +1,56 @@
-from pandas import read_csv
+from typing import List, Tuple
 
-from qee import Analysis
+import pandas as pd
+
+from qee.analysis import Analysis
 from qee.enums import VoltageValue
-from qee.utils.center_print import center_print
-from qee.utils.harmonics_cols import harmonics_cols
+from qee.utils import harmonic_labels
 
-data = read_csv("data/csv/data.csv", sep=";")
+single_phase_voltage = VoltageValue.V220
+three_phase_voltage = VoltageValue.V380
+FILEPATH = 'data/csv/data.csv'
+MODE = 'Avg'
+V1 = f'V1_{MODE} [V]'
+V2 = f'V2_{MODE} [V]'
+V3 = f'V3_{MODE} [V]'
+V12 = f'V12_{MODE} [V]'
+V23 = f'V23_{MODE} [V]'
+V31 = f'V31_{MODE} [V]'
+AMOUNT_HARMONICS = 20
 
-TIME_LABEL = "Time"
-vf_labels = ["V1_Avg [V]", "V2_Avg [V]", "V3_Avg [V]"]
-# vf_labels = ["V1_Min [V]", "V2_Min [V]", "V3_Min [V]"]
-vl_labels = ["V12_Avg [V]", "V23_Avg [V]", "V31_Avg [V]"]
-# vl_labels = ["V12_Min [V]", "V23_Min [V]", "V31_Min [V]"]
-voltage_labels = ["V1", "V2", "V3"]
+single_phase_voltages: List[Tuple[str, VoltageValue]] = [
+    (V1, single_phase_voltage),
+    (V2, single_phase_voltage),
+    (V3, single_phase_voltage),
+]
+
+three_phase_voltages: List[Tuple[str, VoltageValue]] = [
+    (V12, three_phase_voltage),
+    (V23, three_phase_voltage),
+    (V31, three_phase_voltage),
+]
+
+# har01V1_Avg [V]
+v1_labels: Tuple[str, list[str]] = (
+    V1,
+    harmonic_labels(AMOUNT_HARMONICS, 'har', V1),
+)
+v2_labels: Tuple[str, list[str]] = (
+    V2,
+    harmonic_labels(AMOUNT_HARMONICS, 'har', V2),
+)
+v3_labels: Tuple[str, list[str]] = (
+    V3,
+    harmonic_labels(AMOUNT_HARMONICS, 'har', V3),
+)
+
+data = pd.read_csv(FILEPATH, sep=';')
 
 analysis = Analysis(data)
-
-print(center_print("Análise de Indicadores de QEE"))
-
-print("\nVariação de tensão".center(50))
-print("-" * 50)
-
-for vf_label in vf_labels:
-    print(f"\nIndicadores de variação de tensão para {vf_label}")
-    # graphic = analysis.graphic_voltage(TIME_LABEL, vf_label, VoltageValue.V220)
-    # graphic.save(f"data/svg/{vf_label.replace(' ', '_')}.svg")
-
-    nlt = analysis.reading_number(vf_label, VoltageValue.V220)
-    drt = analysis.relative_duration_transgress(nlt.nlp, nlt.nlc)
-    print(f"nla = {nlt.nla}")
-    print(f"nlp = {nlt.nlp}")
-    print(f"nlc = {nlt.nlc}")
-    print(f"drp = {drt.drp:.2f}%")
-    print(f"drc = {drt.drc:.2f}%")
-
-
-for vl_label in vl_labels:
-    print(f"\nIndicadores de variação de tensão para {vl_label}")
-    # graphic = analysis.graphic_voltage(TIME_LABEL, vl_label, VoltageValue.V380)
-    # graphic.save(f"data/svg/{vl_label.replace(' ', '_')}.svg")
-
-    nlt = analysis.reading_number(vl_label, VoltageValue.V380)
-    drt = analysis.relative_duration_transgress(nlt.nlp, nlt.nlc)
-    print(f"nla = {nlt.nla}")
-    print(f"nlp = {nlt.nlp}")
-    print(f"nlc = {nlt.nlc}")
-    print(f"drp = {drt.drp:.2f}%")
-    print(f"drc = {drt.drc:.2f}%")
-
-print("\nDistorções Harmônicas".center(50))
-print("-" * 50)
-
-for voltage_label in voltage_labels:
-    print(f"\nIndicadores de Distorções Harmônicas para {voltage_label}")
-    harmonic = analysis.harmonic_distortions(harmonics_cols(voltage_label))
-    print(f"dtt_95 = {harmonic.dtt_95:.2f}%")
-    print(f"dtt_p_95 = {harmonic.dtt_p_95:.2f}%")
-    print(f"dtt_i_95 = {harmonic.dtt_i_95:.2f}%")
-    print(f"dtt_3_95 = {harmonic.dtt_3_95:.2f}%")
-
-print("\nDesequilíbrio de Tensão".center(50))
-print("-" * 50)
-
-fd_95 = analysis.voltage_imbalance("V1_Avg [V]", "V2_Avg [V]", "V3_Avg [V]")
-print(f"fd_95 = {fd_95:.2f}%")
+# analysis.graphic_voltage(single_phase_voltages)
+# analysis.graphic_voltage(three_phase_voltages)
+analysis.voltage_variation(single_phase_voltages, pdf_table=True)
+analysis.voltage_variation(three_phase_voltages, pdf_table=True)
+analysis.harmonics([v1_labels, v2_labels, v3_labels], pdf_table=True)
+analysis.voltage_imbalance([V12, V23, V31], pdf_table=True)
+analysis.build_table()
