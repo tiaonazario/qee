@@ -10,8 +10,7 @@ from qee.pdf.pdf_table import PDFTable
 class PDF:
     """Classe para gerar PDF"""
 
-    def __init__(self, filename: str) -> None:
-        self.filename = filename
+    def __init__(self) -> None:
         self.elements: list[object] = []
 
     def add(self, element: object) -> None:
@@ -72,6 +71,7 @@ class PDF:
 
     def build(
         self,
+        filename: str,
         pagesize: tuple[float, float] = A4,
         margin: tuple[float, float, float, float] = (
             20 * mm,
@@ -83,7 +83,7 @@ class PDF:
         """Gera o PDF"""
 
         doc = SimpleDocTemplate(
-            self.filename,
+            filename,
             pagesize=pagesize,
             leftMargin=margin[0],
             rightMargin=margin[1],

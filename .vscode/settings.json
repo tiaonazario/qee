@@ -73,7 +73,8 @@
         "--disable=C0114",
         "--disable=E0401",
         "--disable=E1136", // unsubscriptable-object
+        "--extension-pkg-whitelist=PySide6",
     ],
     // dicstringFormat
-    "autoDocstring.docstringFormat": "numpy",
+    "autoDocstring.docstringFormat": "pep257",
 }

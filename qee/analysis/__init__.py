@@ -20,13 +20,13 @@ class Analysis:
 
     def __init__(self, data: pd.DataFrame) -> None:
         self.data = data
-        self.pdf = PDF('relatorio.pdf')
+        self.pdf = PDF()
         self.pdf.add_title('Relatório de Análise de QEE')
 
-    def build_table(self):
+    def build_table(self, filename: str):
         """Construir tabela"""
 
-        self.pdf.build()
+        self.pdf.build(filename)
         print('Tabela construída com sucesso!')
 
     def graphic_voltage(

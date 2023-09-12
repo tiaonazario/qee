@@ -1,49 +1,93 @@
-from typing import List, Tuple
+import sys
 
-import pandas as pd
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import (
+    QApplication,
+    QFrame,
+    QMainWindow,
+    QPushButton,
+    QStackedWidget,
+    QWidget,
+)
 
-from qee.analysis import Analysis
-from qee.enums import VoltageValue
-from qee.utils import harmonic_labels
+from qee.gui.layouts import HorizontalLayout, VerticalLayout
+from qee.gui.pages import AnalysisPage, HomePage, SettingsPage
 
-single_phase_voltage: VoltageValue = VoltageValue.V220
-three_phase_voltage: VoltageValue = VoltageValue.V380
-FILEPATH = 'data/csv/data.csv'
-MODE = 'Avg'
-V1: str = f'V1_{MODE} [V]'
-V2: str = f'V2_{MODE} [V]'
-V3: str = f'V3_{MODE} [V]'
-V12: str = f'V12_{MODE} [V]'
-V23: str = f'V23_{MODE} [V]'
-V31: str = f'V31_{MODE} [V]'
-AMOUNT_HARMONICS = 20
-FREQUENCY = f'freq_{MODE} [Hz]'
 
-single_phase_voltages: List[Tuple[str, VoltageValue]] = [
-    (V1, single_phase_voltage),
-    (V2, single_phase_voltage),
-    (V3, single_phase_voltage),
-]
+class MainWindow(QMainWindow):
+    """Cria a janela principal"""
 
-three_phase_voltages: List[Tuple[str, VoltageValue]] = [
-    (V12, three_phase_voltage),
-    (V23, three_phase_voltage),
-    (V31, three_phase_voltage),
-]
+    def __init__(self) -> None:
+        super().__init__()
 
-# har01V1_Avg [V]
-v1_labels = (V1, harmonic_labels(AMOUNT_HARMONICS, 'har', V1))
-v2_labels = (V2, harmonic_labels(AMOUNT_HARMONICS, 'har', V2))
-v3_labels = (V3, harmonic_labels(AMOUNT_HARMONICS, 'har', V3))
+        self.setWindowTitle('QEE')
+        self.setMinimumSize(960, 540)
 
-data = pd.read_csv(FILEPATH, sep=';')
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+        self.central_widget_layout = HorizontalLayout(self.central_widget)
 
-analysis = Analysis(data)
-# analysis.graphic_voltage(single_phase_voltages)
-# analysis.graphic_voltage(three_phase_voltages)
-analysis.voltage_variation(single_phase_voltages, pdf_table=True)
-analysis.voltage_variation(three_phase_voltages, pdf_table=True)
-analysis.harmonics([v1_labels, v2_labels, v3_labels], pdf_table=True)
-analysis.voltage_imbalance([V12, V23, V31], pdf_table=True)
-analysis.frequency_variation(FREQUENCY, pdf_table=True)
-analysis.build_table()
+        # BARRA LATERAL ESQUERDA
+        self.sidebar = QWidget(self.central_widget)
+        self.sidebar_layout = VerticalLayout(self.sidebar)
+        self.central_widget_layout.addWidget(self.sidebar)
+
+        self.home_button = QPushButton(self.sidebar)
+        self.home_button.setFixedSize(50, 40)
+        self.home_button.setIcon(QIcon('assets/icons/home.svg'))
+        self.home_button.setIconSize(QSize(24, 24))
+        self.home_button.clicked.connect(self.home_page_show)
+        self.sidebar_layout.addWidget(self.home_button)
+
+        self.analysis_button = QPushButton(self.sidebar)
+        self.analysis_button.setFixedSize(50, 40)
+        self.analysis_button.setIcon(QIcon('assets/icons/plug-zap.svg'))
+        self.analysis_button.setIconSize(QSize(24, 24))
+        self.analysis_button.clicked.connect(self.analysis_page_show)
+        self.sidebar_layout.addWidget(self.analysis_button)
+
+        self.spacer = QFrame(self.sidebar)
+        self.sidebar_layout.addWidget(self.spacer)
+
+        self.settings_button = QPushButton(self.sidebar)
+        self.settings_button.setFixedSize(50, 40)
+        self.settings_button.setIcon(QIcon('assets/icons/settings.svg'))
+        self.settings_button.setIconSize(QSize(24, 24))
+        self.settings_button.clicked.connect(self.settings_page_show)
+        self.sidebar_layout.addWidget(self.settings_button)
+
+        # PÁGINAS
+        self.pages = QStackedWidget(self.central_widget)
+        self.central_widget_layout.addWidget(self.pages)
+
+        self.home_page = HomePage(self.pages)
+        self.pages.addWidget(self.home_page)
+        self.pages.setCurrentWidget(self.home_page)
+
+        self.analysis_page = AnalysisPage(self.pages)
+        self.pages.addWidget(self.analysis_page)
+
+        self.settings_page = SettingsPage(self.pages)
+        self.pages.addWidget(self.settings_page)
+
+    def home_page_show(self) -> None:
+        """Mostra a página inicial"""
+        self.pages.setCurrentWidget(self.home_page)
+
+    def analysis_page_show(self) -> None:
+        """Mostra a página de análise de QEE"""
+        self.pages.setCurrentWidget(self.analysis_page)
+
+    def settings_page_show(self) -> None:
+        """Mostra a página de configuração"""
+        self.pages.setCurrentWidget(self.settings_page)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+
+    window = MainWindow()
+    window.show()
+
+    app.exec()
