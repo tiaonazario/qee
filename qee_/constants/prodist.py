@@ -1,6 +1,3 @@
-from qee.types import VoltageRangeType, VoltageValueType
-
-
 DRP_LIMIT = 3.0
 DRC_LIMIT = 0.5
 
@@ -16,7 +13,7 @@ FD_LIMIT = 3.0
 
 FREQUENCY_LIMIT = [59.9, 60.1]
 
-VOLTAGE_RANGE: dict[VoltageValueType, dict[VoltageRangeType, int]] = {
+VOLTAGE_RANGE: dict[int, dict[str, int]] = {
     110: {
         "cr-sup": 117,
         "ad-sup": 116,

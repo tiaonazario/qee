@@ -1,0 +1,111 @@
+QMainWindow {
+    background-color: background-100;
+    color: text-100;
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    color: text-100;
+}
+QPushButton:hover {
+    background-color: highlight-100;
+    color: text-100;
+}
+QPushButton:pressed{
+    background-color: highlight-200;
+    color: text-100;
+}
+
+QLabel {
+    color: text-100;
+    font-size: 16px;
+}
+
+QLineEdit {
+    color: text-100;
+    font-size: 16px;
+}
+
+QFrame {
+    background-color: transparent;
+}
+
+QScrollArea {
+    border: none;
+}
+
+
+QTableWidget {
+	background-color: table-100;
+	border: 1px solid border-200;
+    color: table-200;
+    font-size: 14px;
+}
+QTableWidget::item{
+	border-color: border-200;
+	gridline-color: border-200;
+}
+QTableWidget::item:selected{
+	background-color: highlight-300;
+    color: table-100;
+}
+QHeaderView::section:horizontal{
+    background-color: table-300;
+	border-style: none;
+    color: table-100;
+    font-size: 14px;
+}
+QHeaderView::section:vertical{
+    background-color: table-100;
+	border-style: none;
+    color: table-200;
+    font-size: 14px;
+}
+
+
+#title_page {
+    font-size: 20px;
+    color: text-300;
+}
+
+#theme_button {
+    background-color: transparent;
+}
+
+#path_frame {
+    background-color: background-200;
+    border: 1px solid border-100;
+}
+
+#path_edit {
+    border: none;
+    background-color: background-100;
+}
+
+#data_title {
+    color: text-200;
+}
+
+#choose_button {
+    font-size: 16px;
+    background-color: highlight-100;
+}
+#choose_button:hover {
+    font-size: 16px;
+    background-color: highlight-200;
+}
+#choose_button:pressed {
+    font-size: 16px;
+    background-color: highlight-300;
+}
+
+#result_title {
+    border-bottom: 1px solid border-100;
+    color: text-200;
+}
+
+#result_title_edit {
+    border: none;
+    background-color: transparent;
+}
