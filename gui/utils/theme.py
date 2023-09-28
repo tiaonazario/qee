@@ -1,4 +1,5 @@
 import json
+
 from gui.types import ThemeType
 
 
@@ -11,7 +12,7 @@ class Theme:
     def load(self) -> ThemeType:
         """Carrega o terma"""
 
-        path = "gui/themes/" + self.name + ".json"
+        path = 'gui/themes/' + self.name + '.json'
 
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, 'r', encoding='utf-8') as file:
             return json.load(file)

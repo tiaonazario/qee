@@ -1,8 +1,8 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QLabel, QFrame, QLineEdit
+from PySide6.QtWidgets import QFrame, QLabel, QLineEdit, QWidget
 
-from gui.widgets import Button
 from gui.layouts import HorizontalLayout
+from gui.widgets import Button
 
 
 class PathFrame(QFrame):
@@ -18,7 +18,7 @@ class PathFrame(QFrame):
         self._layout.addWidget(self.spacer_left)
 
         self.central_frame = QFrame(self)
-        self.central_frame.setObjectName("path_frame")
+        self.central_frame.setObjectName('path_frame')
         self.central_frame.setFixedSize(560, 30)
         self._layout.addWidget(self.central_frame)
 
@@ -29,21 +29,23 @@ class PathFrame(QFrame):
         self.spacer_left = QFrame(self)
         self._layout.addWidget(self.spacer_left)
 
-        self.label = QLabel("Arquivo: ", self.central_frame)
+        self.label = QLabel('Arquivo: ', self.central_frame)
         self.label.setFixedWidth(60)
         self.central_layout.addWidget(self.label)
 
         self.path_edit = QLineEdit(self.central_frame)
-        self.path_edit.setObjectName("path_edit")
+        self.path_edit.setObjectName('path_edit')
         self.path_edit.setFixedSize(400, 25)
         self.central_layout.addWidget(self.path_edit)
 
         self.open_button = Button(self.central_frame)
         self.open_button.setFixedSize(30, 30)
-        self.open_button.set_icon("folder-open")
+        self.open_button.set_icon('folder-open')
+        self.open_button.setStatusTip('Abre o gerenciador de arquivos')
         self.central_layout.addWidget(self.open_button)
 
         self.load_button = Button(self.central_frame)
+        self.load_button.setStatusTip('Carrega os dados da planilha na tabela')
         self.load_button.setFixedSize(30, 30)
-        self.load_button.set_icon("loader")
+        self.load_button.set_icon('loader')
         self.central_layout.addWidget(self.load_button)

@@ -1,5 +1,6 @@
 import os
-from PySide6.QtCore import Qt, QSize
+
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QPushButton, QWidget
 
@@ -16,7 +17,7 @@ class Button(QPushButton):
         """Seta o ícone"""
 
         app_path = os.path.abspath(os.getcwd())
-        folder = "gui/assets/"
+        folder = 'gui/assets/'
         path = os.path.join(app_path, folder)
         icon_path = os.path.normpath(os.path.join(path, icon))
         self.setIcon(QIcon(icon_path))

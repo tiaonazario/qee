@@ -24,6 +24,7 @@
         "linestyle",
         "marp",
         "matplotlib",
+        "maxsplit",
         "pagesizes",
         "prodist",
         "PRODIST",

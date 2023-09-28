@@ -1,15 +1,6 @@
-from typing import Literal
 import json
 
 from gui.types import SettingsKeysType, ThemeNameType
-
-SettingsUpdateType = (
-    dict[Literal["name"], str]
-    | dict[Literal["version"], str]
-    | dict[Literal["description"], str]
-    | dict[Literal["theme"], ThemeNameType]
-    | dict[Literal["author"], str]
-)
 
 
 class Settings:
@@ -20,13 +11,15 @@ class Settings:
 
     def load(self) -> dict[SettingsKeysType, str]:
         """Carrega as configurações do arquivo de configuração"""
-        with open("settings.json", "r", encoding="utf-8") as file:
+        with open('settings.json', 'r', encoding='utf-8') as file:
             return json.load(file)
 
-    def update(self, setting: SettingsUpdateType) -> None:
+    def update(self, key: SettingsKeysType, value: str) -> None:
         """Atualiza uma configuração"""
-        key = list(setting.keys())[0]
-        value = list(setting.values())[0]
         self.values[key] = value
-        with open("settings.json", "w", encoding="utf-8") as file:
+        with open('settings.json', 'w', encoding='utf-8') as file:
             json.dump(self.values, file, indent=4)
+
+    def update_theme(self, theme: ThemeNameType) -> None:
+        """Atualiza o tema"""
+        self.update('theme', theme)

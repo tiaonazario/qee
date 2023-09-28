@@ -1,11 +1,11 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from qee.classes.frequency import Frequency
-from qee.classes.voltage_variation import VoltageVariation
-from qee.classes.voltage_imbalance import VoltageImbalance
-from qee.classes.power_factor import PowerFactor
 from qee.classes.harmonics import Harmonics
+from qee.classes.power_factor import PowerFactor
+from qee.classes.voltage_imbalance import VoltageImbalance
+from qee.classes.voltage_variation import VoltageVariation
 from qee.constants import prodist
 from qee.types import VoltageValueType
 
@@ -21,27 +21,29 @@ class Analysis:
     ) -> pd.DataFrame:
         """Calcula a variação de tensão"""
 
-        drp_list = []
-        drc_list = []
+        drp_list: list[tuple[str, float]] = []
+        drc_list: list[tuple[str, float]] = []
 
         for label in labels:
             values: list[float] = self.data_frame[label].to_list()
 
             indicators = VoltageVariation(values, reference).indicators()
 
-            drp_list.append([label, indicators["DRP"]])
-            drc_list.append([label, indicators["DRC"]])
+            drp_list.append((label, indicators['DRP']))
+            drc_list.append((label, indicators['DRC']))
 
+        # drp_selected =
+        # drc_selected =
         drp_label, drp = max(drp_list, key=lambda x: x[1])
         drc_label, drc = max(drc_list, key=lambda x: x[1])
 
         data = {
-            "Indicador": ["DRP", "DRC"],
-            "Tensão": [drp_label, drc_label],
-            "Obtido": [f"{drp:.2f}%", f"{drc:.2f}%"],
-            "PRODIST": [
-                f"{prodist.DRP_LIMIT:.2f}%",
-                f"{prodist.DRC_LIMIT:.2f}%",
+            'Indicador': ['DRP', 'DRC'],
+            'Tensão': [drp_label, drc_label],
+            'Obtido': [f'{drp:.2f}%', f'{drc:.2f}%'],
+            'PRODIST': [
+                f'{prodist.DRP_LIMIT:.2f}%',
+                f'{prodist.DRC_LIMIT:.2f}%',
             ],
         }
 
@@ -59,10 +61,10 @@ class Analysis:
         for values in harmonic_voltages.values.tolist():
             indicators = Harmonics(values).distortion()
 
-            total_harmonic_distortions.append(indicators["DTT"])
-            total_harmonic_distortions_even.append(indicators["DTTp"])
-            total_harmonic_distortions_odd.append(indicators["DTTi"])
-            total_harmonic_distortions_3.append(indicators["DTT3"])
+            total_harmonic_distortions.append(indicators['DTT'])
+            total_harmonic_distortions_even.append(indicators['DTTp'])
+            total_harmonic_distortions_odd.append(indicators['DTTi'])
+            total_harmonic_distortions_3.append(indicators['DTT3'])
 
         dtt_95, dtt_p_95, dtt_i_95, dtt_3_95 = [
             float(np.percentile(total_harmonic_distortions, 95)),
@@ -72,23 +74,23 @@ class Analysis:
         ]
 
         data = {
-            "Indicador": [
-                "DTT_95%",
-                "DTT_p_95%",
-                "DTT_i_95%",
-                "DTT_3_95%",
+            'Indicador': [
+                'DTT_95%',
+                'DTT_p_95%',
+                'DTT_i_95%',
+                'DTT_3_95%',
             ],
-            "Obtido": [
-                f"{dtt_95:.2f}%",
-                f"{dtt_p_95:.2f}%",
-                f"{dtt_i_95:.2f}%",
-                f"{dtt_3_95:.2f}%",
+            'Obtido': [
+                f'{dtt_95:.2f}%',
+                f'{dtt_p_95:.2f}%',
+                f'{dtt_i_95:.2f}%',
+                f'{dtt_3_95:.2f}%',
             ],
-            "PRODIST": [
-                f"{prodist.DTT_95:.2f}%",
-                f"{prodist.DTT_P_95:.2f}%",
-                f"{prodist.DTT_I_95:.2f}%",
-                f"{prodist.DTT_3_95:.2f}%",
+            'PRODIST': [
+                f'{prodist.DTT_95:.2f}%',
+                f'{prodist.DTT_P_95:.2f}%',
+                f'{prodist.DTT_I_95:.2f}%',
+                f'{prodist.DTT_3_95:.2f}%',
             ],
         }
 
@@ -103,14 +105,14 @@ class Analysis:
         amount_adequate = 0
         for factor in fps:
             classify = PowerFactor(factor).classify()
-            if classify == "Adequado":
+            if classify == 'Adequado':
                 amount_adequate += 1
             else:
                 amount_low += 1
 
         data = {
-            "Classificação": ["Adequado", "Crítico"],
-            "Quantidade": [str(amount_adequate), str(amount_low)],
+            'Classificação': ['Adequado', 'Crítico'],
+            'Quantidade': [str(amount_adequate), str(amount_low)],
         }
 
         return pd.DataFrame(data)
@@ -120,7 +122,7 @@ class Analysis:
 
         values = self.data_frame[labels]
 
-        indicators = []
+        indicators: list[float] = []
         for voltages in values.values.tolist():
             imbalance = VoltageImbalance(voltages[0], voltages[1], voltages[2])
             indicators.append(imbalance.factor())
@@ -128,9 +130,9 @@ class Analysis:
         indicator_95 = float(np.percentile(indicators, 95))
 
         data = {
-            "Indicador": ["FD95%"],
-            "Obtido": [f"{indicator_95:.2f}%"],
-            "PRODIST": [f"{prodist.FD_LIMIT:.2f}%"],
+            'Indicador': ['FD95%'],
+            'Obtido': [f'{indicator_95:.2f}%'],
+            'PRODIST': [f'{prodist.FD_LIMIT:.2f}%'],
         }
 
         return pd.DataFrame(data)
@@ -145,16 +147,16 @@ class Analysis:
         adequate = 0
         for frequency in frequencies:
             classify = Frequency(frequency).classify()
-            if classify == "Adequada":
+            if classify == 'Adequada':
                 adequate += 1
-            elif classify == "Baixa":
+            elif classify == 'Baixa':
                 low += 1
             else:
                 high += 1
 
         data = {
-            "Classificação": ["Adequada", "Alta", "Baixa"],
-            "Quantidade": [str(low), str(high), str(adequate)],
+            'Classificação': ['Adequada', 'Alta', 'Baixa'],
+            'Quantidade': [str(low), str(high), str(adequate)],
         }
 
         return pd.DataFrame(data)

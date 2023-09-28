@@ -1,9 +1,9 @@
 import pandas as pd
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import QWidget, QFrame, QLineEdit
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import QFrame, QLineEdit, QWidget
 
-from gui.widgets import Button, Table
 from gui.layouts import HorizontalLayout, VerticalLayout
+from gui.widgets import Button, Table
 
 
 class Result(QWidget):
@@ -19,7 +19,7 @@ class Result(QWidget):
 
         self.title = QLineEdit(self)
         self.title.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.title.setObjectName("result_title_edit")
+        self.title.setObjectName('result_title_edit')
         self.title.setFixedHeight(20)
         self._layout.addWidget(self.title)
 
@@ -43,13 +43,13 @@ class Result(QWidget):
 
         self.remove_button = Button(self.buttons_frame)
         self.remove_button.setFixedSize(20, 20)
-        self.remove_button.set_icon("x.svg")
+        self.remove_button.set_icon('x.svg')
         self.remove_button.setIconSize(QSize(15, 15))
         self.buttons_layout.addWidget(self.remove_button)
 
         self.save_button = Button(self.buttons_frame)
         self.save_button.setFixedSize(20, 20)
-        self.save_button.set_icon("download.svg")
+        self.save_button.set_icon('download.svg')
         self.save_button.setIconSize(QSize(15, 15))
         self.buttons_layout.addWidget(self.save_button)
 

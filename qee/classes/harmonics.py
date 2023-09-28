@@ -15,7 +15,7 @@ class Harmonics:
 
     def distortion(
         self,
-    ) -> dict[Literal["DTT", "DTTp", "DTTi", "DTT3"], float]:
+    ) -> dict[Literal['DTT', 'DTTp', 'DTTi', 'DTT3'], float]:
         """Calcula as Distorção harmônicas total de tensão"""
 
         total_sum: float = 0
@@ -39,14 +39,14 @@ class Harmonics:
                 total_sum_multiple_3 += voltage**2
 
         return {
-            "DTT": self.individual_harmonic_distortion(total_sum ** (1 / 2)),
-            "DTTp": self.individual_harmonic_distortion(
+            'DTT': self.individual_harmonic_distortion(total_sum ** (1 / 2)),
+            'DTTp': self.individual_harmonic_distortion(
                 total_sum_even_not_multiple_3 ** (1 / 2)
             ),
-            "DTTi": self.individual_harmonic_distortion(
+            'DTTi': self.individual_harmonic_distortion(
                 total_sum_odd_not_multiple_3 ** (1 / 2)
             ),
-            "DTT3": self.individual_harmonic_distortion(
+            'DTT3': self.individual_harmonic_distortion(
                 total_sum_multiple_3 ** (1 / 2)
             ),
         }

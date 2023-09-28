@@ -64,6 +64,28 @@ QHeaderView::section:vertical{
 }
 
 
+QStatusBar {
+    background-color: background-200;
+    color: text-100;
+}
+
+QMessageBox {
+    background-color: background-100;
+}
+
+QMenu {
+    background-color: background-100;
+    border: 1px solid border-100;
+    color: text-100;
+}
+QMenu::item {
+    padding: 5px 25px;
+}
+QMenu::item:selected {
+    background-color: highlight-100;
+}
+
+
 #title_page {
     font-size: 20px;
     color: text-300;
@@ -101,8 +123,10 @@ QHeaderView::section:vertical{
 }
 
 #result_title {
+    border: none;
     border-bottom: 1px solid border-100;
-    color: text-200;
+    background-color: transparent;
+    color: text-300;
 }
 
 #result_title_edit {

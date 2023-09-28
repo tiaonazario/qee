@@ -2,9 +2,51 @@ from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table
+from reportlab.platypus import (
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
-from qee.pdf.pdf_table import PDFTable
+
+class PDFTable:
+    """Classe para criar tabela no PDF"""
+
+    def __init__(self, headers: list[str], contents: list[list[str]]) -> None:
+        self.headers = headers
+        self.contents = contents
+        self.data = [self.headers] + self.contents
+        self.table = self.__build()
+
+    def __build(self) -> Table:
+        """Cria a tabela"""
+
+        widths: list[int] = []
+        for col in self.headers:
+            size = len(col) + 1
+            widths.append(size * 10)
+
+        table = Table(self.data, colWidths=widths)
+        style = TableStyle(
+            [
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#343A40')),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('TEXTCOLOR', (0, 0), (-1, 0), HexColor('#F8F9FA')),
+                ('LINEBELOW', (0, -1), (-1, -1), 0.5, HexColor('#ADB5BD')),
+                ('LINEBEFORE', (0, 0), (0, -1), 0.5, HexColor('#ADB5BD')),
+                ('LINEAFTER', (-1, 0), (-1, -1), 0.5, HexColor('#ADB5BD')),
+                ('LINEAFTER', (0, 0), (0, -1), 0.5, HexColor('#ADB5BD')),
+                ('LINEAFTER', (0, 1), (1, -1), 0.5, HexColor('#ADB5BD')),
+                ('FONTSIZE', (0, 0), (-1, -1), 12),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ]
+        )
+        table.setStyle(style)
+
+        return table
 
 
 class PDF:
@@ -18,12 +60,15 @@ class PDF:
 
         self.elements.append(element)
 
-    def create_table(
+    def add_table(
         self, headers: list[str], contents: list[list[str]]
     ) -> Table:
         """Adiciona uma tabela ao PDF"""
 
-        return PDFTable(headers, contents).table
+        table = PDFTable(headers, contents).table
+        self.elements.append(table)
+
+        return table
 
     def add_spacer(self, width: int = 1, height: int = 12) -> None:
         """Adiciona um espaço ao PDF"""
@@ -47,9 +92,9 @@ class PDF:
 
         style = ParagraphStyle(
             name='Heading1',
-            fontName='Helvetica-Bold',
             fontSize=10,
             alignment=1,
+            spaceAfter=6,
         )
 
         self.elements.append(Paragraph(text, style))
@@ -74,8 +119,8 @@ class PDF:
         filename: str,
         pagesize: tuple[float, float] = A4,
         margin: tuple[float, float, float, float] = (
-            20 * mm,
-            20 * mm,
+            30 * mm,
+            30 * mm,
             20 * mm,
             20 * mm,
         ),
@@ -86,8 +131,8 @@ class PDF:
             filename,
             pagesize=pagesize,
             leftMargin=margin[0],
-            rightMargin=margin[1],
-            topMargin=margin[2],
+            topMargin=margin[1],
+            rightMargin=margin[2],
             bottomMargin=margin[3],
         )
 

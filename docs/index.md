@@ -1,1 +1,0 @@
-# Qualidade de Energia Elétrica

@@ -12,6 +12,6 @@ class PowerFactor:
         """Classifica o fator de potência"""
 
         if self.value < prodist.FP_INDUTIVO:
-            return "Crítico"
+            return 'Crítico'
         else:
-            return "Adequado"
+            return 'Adequado'
