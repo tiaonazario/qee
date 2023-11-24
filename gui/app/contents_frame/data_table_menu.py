@@ -10,14 +10,15 @@ class DataTableMenu(QMenu):
 
         self.table = parent
 
-        self.graphic_button = self.addAction('Gerar gráfico')
-        self.voltage_variation_button = self.addAction('Variação de tensão')
-        self.power_factor_button = self.addAction('Fator de potência')
-        self.harmonics_button = self.addAction('Distorções harmonicas')
+        self.graphic_button = self.addAction("Gerar gráfico")
+        self.voltage_variation_button = self.addAction("Variação de tensão")
+        self.power_factor_button = self.addAction("Fator de potência")
+        self.harmonics_button = self.addAction("Distorções harmonicas")
         self.voltage_imbalance_button = self.addAction(
-            'Desequilíbrio de tensão'
+            "Desequilíbrio de tensão"
         )
-        self.frequency_button = self.addAction('Variação de frequência')
+        self.flicker_button = self.addAction("Flutuação de tensão")
+        self.frequency_button = self.addAction("Variação de frequência")
 
         # Conectar um slot ao evento de clique do botão direito do mouse
         self.table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)

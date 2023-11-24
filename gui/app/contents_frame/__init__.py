@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 from gui.app.contents_frame.data_table_menu import DataTableMenu
 from gui.app.contents_frame.result import Result
 from gui.layouts import HorizontalLayout, VerticalLayout
-from gui.widgets import Button, Table
+from gui.widgets import Button, Message, Table
 from qee.classes import PDF
 from qee.types import VoltageValueType
 
@@ -26,9 +26,7 @@ class ContentsFrame(QFrame):
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
 
-        self.message_box = QMessageBox(self)
-        button = self.message_box.addButton("Ok", QMessageBox.AcceptRole)
-        button.setFixedSize(60, 30)
+        self.message_box = Message(self)
 
         self._layout = HorizontalLayout(self)
         self._layout.setContentsMargins(16, 8, 16, 8)
@@ -98,14 +96,7 @@ class ContentsFrame(QFrame):
 
         self.result_items: list[Result] = []
 
-    def show_message(self, message: str) -> None:
-        """Mostra uma mensagem na tela"""
-        self.message_box.setWindowTitle("Erro")
-        self.message_box.setIcon(QMessageBox.Icon.Critical)
-        self.message_box.setText(message)
-        self.message_box.exec()
-
-    def get_save_file_name(self, filters: list[str]) -> str:
+    def get_save_file_name(self, filters: list[str]) -> tuple[str, str]:
         """Pegar o caminho do arquivo para salvar"""
         filter_join = ";;".join(filters)
         file_dialog = QFileDialog.getSaveFileName(
@@ -116,7 +107,7 @@ class ContentsFrame(QFrame):
             selectedFilter=filters[0],
         )
 
-        return str(file_dialog[0])
+        return str(file_dialog[0]), str(file_dialog[1])
 
     def remove_result(self, result: Result) -> None:
         """Remove o resultado"""
@@ -127,25 +118,37 @@ class ContentsFrame(QFrame):
             if item == result:
                 self.result_items.remove(item)
 
+    def filename_not_selected(self) -> None:
+        """Nenhum nome de arquivo foi selecionado"""
+        self.message_box.setText("Nenhum nome de arquivo foi escolhido")
+        self.message_box.set_option("Aviso")
+        self.message_box.exec()
+
+    def save_successful(self) -> None:
+        """Sucesso ao salvar"""
+        self.message_box.setText("Arquivo salvo com sucesso")
+        self.message_box.set_option("Informação")
+        self.message_box.exec()
+
     def save_result(self, data_frame: pd.DataFrame, title: str) -> None:
         """Salvar resultado"""
         filters = [
             "Formato CSV (*.csv)",
             "Formato PDF (*.pdf)",
             "Formato TXT (*.txt)",
+            "Formato LaTex em TXT (*.txt)",
         ]
-        path_file = self.get_save_file_name(filters)
+        path_file = self.get_save_file_name(filters)[0]
+        filter_selected = self.get_save_file_name(filters)[1]
         if path_file == "":
-            self.show_message("Nenhum nome de arquivo foi escolhido")
+            self.filename_not_selected()
             return
 
-        extension = path_file.rsplit(".", maxsplit=1)[-1]
-
-        if extension == "csv":
+        if filter_selected == "Formato CSV (*.csv)":
             data_frame.to_csv(
                 path_file, sep=";", index=False, encoding="utf-8"
             )
-        elif extension == "pdf":
+        elif filter_selected == "Formato PDF (*.pdf)":
             headers = data_frame.columns.tolist()
             contents: list[list[str]] = data_frame.values.tolist()
 
@@ -154,12 +157,18 @@ class ContentsFrame(QFrame):
             pdf.add_table(headers, contents)
             pdf.build(path_file)
 
-        elif extension == "txt":
+        elif filter_selected == "Formato TXT (*.txt)":
             text = title + "\n" + data_frame.to_string()
             with open(path_file, "w", encoding="utf-8") as file:
                 file.write(text)
 
-        self.show_message("Arquivo salvo com sucesso")
+        elif filter_selected == "Formato LaTex em TXT (*.txt)":
+            latex = "Código LaTex\n"
+            latex += data_frame.to_latex(index=False, escape=False) + "\n\n"
+            with open(path_file, "w", encoding="utf-8") as file:
+                file.write(latex)
+
+        self.save_successful()
 
     def add_result(self, data_frame: pd.DataFrame, title: str) -> None:
         """Seta o resultado"""
@@ -181,24 +190,35 @@ class ContentsFrame(QFrame):
 
     def save_analysis(self) -> None:
         """Salvar análise"""
-        filters = ["Formato PDF (*.pdf)", "Formato TXT (*.txt)"]
-        path_file = self.get_save_file_name(filters)
+
+        if len(self.result_items) == 0:
+            self.message_box.set_option("Aviso")
+            self.message_box.setText("Nenhum resultado foi adicionado")
+            self.message_box.exec()
+            return
+
+        filters = [
+            "Formato PDF (*.pdf)",
+            "Formato TXT (*.txt)",
+            "Formato LaTex em TXT (*.txt)",
+        ]
+        path_file = self.get_save_file_name(filters)[0]
+        filter_selected = self.get_save_file_name(filters)[1]
         title = self.result_title.text()
 
         if path_file == "":
-            self.show_message("Nenhum nome de arquivo foi escolhido")
+            self.filename_not_selected()
             return
 
-        extension = path_file.rsplit(".", maxsplit=1)[-1]
-
         text = title + "\n"
+        latex = "Código LaTex\n"
         for index, result in enumerate(self.result_items):
             data_frame = result.data_frame
             title_table = result.title.text()
 
             headers = data_frame.columns.tolist()
             contents: list[list[str]] = data_frame.values.tolist()
-            if extension == "pdf":
+            if filter_selected == "Formato PDF (*.pdf)":
                 if index == 0:
                     pdf = PDF()
                     pdf.add_title(title)
@@ -210,11 +230,18 @@ class ContentsFrame(QFrame):
                 if index == len(self.result_items) - 1:
                     pdf.build(path_file)
 
-            elif extension == "txt":
+            elif filter_selected == "Formato TXT (*.txt)":
                 text += "\n" + title_table + "\n" + data_frame.to_string()
 
                 if index == len(self.result_items) - 1:
                     with open(path_file, "w", encoding="utf-8") as file:
                         file.write(text)
 
-        self.show_message("Arquivo salvo com sucesso")
+            elif filter_selected == "Formato LaTex em TXT (*.txt)":
+                latex += (
+                    data_frame.to_latex(index=False, escape=False) + "\n\n"
+                )
+                with open(path_file, "w", encoding="utf-8") as file:
+                    file.write(latex)
+
+        self.save_successful()

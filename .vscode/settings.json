@@ -25,6 +25,7 @@
         "marp",
         "matplotlib",
         "maxsplit",
+        "mkdocstrings",
         "pagesizes",
         "prodist",
         "PRODIST",
@@ -33,7 +34,11 @@
         "savefig",
         "svglib",
         "tablefmt",
-        "TEXTCOLOR"
+        "TEXTCOLOR",
+        "tiaonazario",
+        "xlabel",
+        "xlim",
+        "ylabel"
     ],
     // python extension
     "python.analysis.inlayHints.functionReturnTypes": true,

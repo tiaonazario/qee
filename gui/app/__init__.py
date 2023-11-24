@@ -1,11 +1,12 @@
 import pandas as pd
-from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox, QWidget
+from PySide6.QtWidgets import QDialog, QFileDialog, QWidget
 
 from gui.app.contents_frame import ContentsFrame
 from gui.app.path_frame import PathFrame
 from gui.app.title_bar_page import TitleBarPage
 from gui.app.voltage_dialog import VoltageDialog
 from gui.layouts import VerticalLayout
+from gui.widgets import Message
 from qee.classes import Analysis, Graphic
 from qee.types import VoltageValueType
 
@@ -18,13 +19,14 @@ class CentralWidget(QWidget):
 
         path_file = "..."
         self.data_frame = pd.DataFrame()
+        self.check_type = ""
+        self.check_values = ""
+        self.save_graphics = False
         self.reference_voltage: VoltageValueType = 220
         self.analysis = Analysis(self.data_frame)
 
         self._layout = VerticalLayout(self)
-        self.message_box = QMessageBox(self)
-        button = self.message_box.addButton("Ok", QMessageBox.AcceptRole)
-        button.setFixedSize(60, 30)
+        self.message_box = Message(self)
 
         self.title_bar_page = TitleBarPage(self)
         self._layout.addWidget(self.title_bar_page)
@@ -52,14 +54,16 @@ class CentralWidget(QWidget):
         self.contents_frame.table_menu.voltage_imbalance_button.triggered.connect(
             self.voltage_imbalance
         )
+        self.contents_frame.table_menu.flicker_button.triggered.connect(
+            self.flicker
+        )
         self.contents_frame.table_menu.frequency_button.triggered.connect(
             self.frequency_variation
         )
 
     def show_message(self, message: str) -> None:
         """Mostra uma mensagem na tela"""
-        self.message_box.setWindowTitle("Erro")
-        self.message_box.setIcon(QMessageBox.Icon.Critical)
+        self.message_box.set_option("Erro")
         self.message_box.setText(message)
         self.message_box.exec()
 
@@ -105,25 +109,39 @@ class CentralWidget(QWidget):
 
         self.analysis = Analysis(self.data_frame)
 
-    def open_voltage_dialog(self) -> int:
+    def open_voltage_dialog(
+        self, show_radios: bool = False, save_graphics: bool = False
+    ) -> int:
         """Abre o diálogo de seleção de tensão"""
-        dialog = VoltageDialog(self)
+        dialog = VoltageDialog(self, show_radios, save_graphics)
         return dialog.exec()
 
     def generate_graph(self) -> None:
         """Gera o gráfico"""
 
-        response = self.open_voltage_dialog()
+        response = self.open_voltage_dialog(save_graphics=True)
         if response == QDialog.DialogCode.Accepted:
-            label = self.contents_frame.data_table.get_selected_columns()[0]
-
             x_axis: list[float] = list(range(1, 1009))
-            y_axis: list[float] = self.data_frame[label].to_list()
+            voltage_labels = (
+                self.contents_frame.data_table.get_selected_columns()
+            )
 
-            title = f"Gráfico com classificação de tensão ({label})"
-            graphic = Graphic(x_axis, y_axis, title)
+            if x_axis is None:
+                self.show_message("Forneça um intervalo válido")
+                return
+
+            graphic = Graphic()
+            for label in voltage_labels:
+                y_axis: list[float] = self.data_frame[label].to_list()
+                graphic.axes.plot(x_axis, y_axis, label=label)
+
             graphic.voltage(self.reference_voltage)
-            graphic.show()
+            if self.save_graphics:
+                label = "_".join(voltage_labels)
+                label = label.replace(" [V]", "_")
+                graphic.save(f"waves/{label}.pdf")
+            else:
+                graphic.show()
 
     def voltage_variation(self) -> None:
         """Variação de tensão"""
@@ -133,13 +151,16 @@ class CentralWidget(QWidget):
             self.show_message("Selecione três colunas referentes as tensões")
             return
 
-        response = self.open_voltage_dialog()
+        response = self.open_voltage_dialog(True)
         if response == QDialog.DialogCode.Accepted:
             data = self.analysis.voltage_variation(
                 labels, self.reference_voltage
             )
 
-            self.contents_frame.add_result(data, "Variação de tensão")
+            self.contents_frame.add_result(
+                data,
+                f"Variação de tensão ({self.check_type}) - valores {self.check_values}",
+            )
 
     def power_factor(self) -> None:
         """Fator de potência"""
@@ -164,6 +185,13 @@ class CentralWidget(QWidget):
         data = self.analysis.voltage_imbalance(labels)
 
         self.contents_frame.add_result(data, "Desequilíbrio de tensão")
+
+    def flicker(self):
+        """Flutuação de tensão"""
+
+        label = self.contents_frame.data_table.get_selected_columns()[0]
+        data = self.analysis.flicker(label)
+        self.contents_frame.add_result(data, "Flutuação de tensão")
 
     def frequency_variation(self) -> None:
         """Variação de frequência"""

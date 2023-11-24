@@ -29,8 +29,8 @@ class Analysis:
 
             indicators = VoltageVariation(values, reference).indicators()
 
-            drp_list.append((label, indicators['DRP']))
-            drc_list.append((label, indicators['DRC']))
+            drp_list.append((label, indicators["DRP"]))
+            drc_list.append((label, indicators["DRC"]))
 
         # drp_selected =
         # drc_selected =
@@ -38,12 +38,12 @@ class Analysis:
         drc_label, drc = max(drc_list, key=lambda x: x[1])
 
         data = {
-            'Indicador': ['DRP', 'DRC'],
-            'Tensão': [drp_label, drc_label],
-            'Obtido': [f'{drp:.2f}%', f'{drc:.2f}%'],
-            'PRODIST': [
-                f'{prodist.DRP_LIMIT:.2f}%',
-                f'{prodist.DRC_LIMIT:.2f}%',
+            "Indicador": ["DRP", "DRC"],
+            "Tensão": [drp_label, drc_label],
+            "Obtido": [f"{drp:.2f}%", f"{drc:.2f}%"],
+            "PRODIST": [
+                f"{prodist.DRP_LIMIT:.2f}%",
+                f"{prodist.DRC_LIMIT:.2f}%",
             ],
         }
 
@@ -61,10 +61,10 @@ class Analysis:
         for values in harmonic_voltages.values.tolist():
             indicators = Harmonics(values).distortion()
 
-            total_harmonic_distortions.append(indicators['DTT'])
-            total_harmonic_distortions_even.append(indicators['DTTp'])
-            total_harmonic_distortions_odd.append(indicators['DTTi'])
-            total_harmonic_distortions_3.append(indicators['DTT3'])
+            total_harmonic_distortions.append(indicators["DTT"])
+            total_harmonic_distortions_even.append(indicators["DTTp"])
+            total_harmonic_distortions_odd.append(indicators["DTTi"])
+            total_harmonic_distortions_3.append(indicators["DTT3"])
 
         dtt_95, dtt_p_95, dtt_i_95, dtt_3_95 = [
             float(np.percentile(total_harmonic_distortions, 95)),
@@ -74,23 +74,23 @@ class Analysis:
         ]
 
         data = {
-            'Indicador': [
-                'DTT_95%',
-                'DTT_p_95%',
-                'DTT_i_95%',
-                'DTT_3_95%',
+            "Indicador": [
+                "DTT_95%",
+                "DTT_p_95%",
+                "DTT_i_95%",
+                "DTT_3_95%",
             ],
-            'Obtido': [
-                f'{dtt_95:.2f}%',
-                f'{dtt_p_95:.2f}%',
-                f'{dtt_i_95:.2f}%',
-                f'{dtt_3_95:.2f}%',
+            "Obtido": [
+                f"{dtt_95:.2f}%",
+                f"{dtt_p_95:.2f}%",
+                f"{dtt_i_95:.2f}%",
+                f"{dtt_3_95:.2f}%",
             ],
-            'PRODIST': [
-                f'{prodist.DTT_95:.2f}%',
-                f'{prodist.DTT_P_95:.2f}%',
-                f'{prodist.DTT_I_95:.2f}%',
-                f'{prodist.DTT_3_95:.2f}%',
+            "PRODIST": [
+                f"{prodist.DTT_95:.2f}%",
+                f"{prodist.DTT_P_95:.2f}%",
+                f"{prodist.DTT_I_95:.2f}%",
+                f"{prodist.DTT_3_95:.2f}%",
             ],
         }
 
@@ -105,14 +105,14 @@ class Analysis:
         amount_adequate = 0
         for factor in fps:
             classify = PowerFactor(factor).classify()
-            if classify == 'Adequado':
+            if classify == "Adequado":
                 amount_adequate += 1
             else:
                 amount_low += 1
 
         data = {
-            'Classificação': ['Adequado', 'Crítico'],
-            'Quantidade': [str(amount_adequate), str(amount_low)],
+            "Classificação": ["Adequado", "Crítico"],
+            "Quantidade": [str(amount_adequate), str(amount_low)],
         }
 
         return pd.DataFrame(data)
@@ -130,9 +130,24 @@ class Analysis:
         indicator_95 = float(np.percentile(indicators, 95))
 
         data = {
-            'Indicador': ['FD95%'],
-            'Obtido': [f'{indicator_95:.2f}%'],
-            'PRODIST': [f'{prodist.FD_LIMIT:.2f}%'],
+            "Indicador": ["FD95%"],
+            "Obtido": [f"{indicator_95:.2f}%"],
+            "PRODIST": [f"{prodist.FD_LIMIT:.2f}%"],
+        }
+
+        return pd.DataFrame(data)
+
+    def flicker(self, label: str) -> pd.DataFrame:
+        """Calcula o flicker"""
+
+        psts: list[float] = self.data_frame[label].to_list()
+
+        pst_95 = float(np.percentile(psts, 95))
+
+        data = {
+            "Indicador": ["Pst95%"],
+            "Obtido": [f"{pst_95:.2f}pu"],
+            "PRODIST": [f"{prodist.P_ST_LIMIT:.2f}pu"],
         }
 
         return pd.DataFrame(data)
@@ -147,16 +162,21 @@ class Analysis:
         adequate = 0
         for frequency in frequencies:
             classify = Frequency(frequency).classify()
-            if classify == 'Adequada':
+            if classify == "Adequada":
                 adequate += 1
-            elif classify == 'Baixa':
+            elif classify == "Baixa":
                 low += 1
             else:
                 high += 1
 
         data = {
-            'Classificação': ['Adequada', 'Alta', 'Baixa'],
-            'Quantidade': [str(low), str(high), str(adequate)],
+            "Classificação": ["Alta", "Adequada", "Baixa"],
+            "Quantidade": [str(high), str(adequate), str(low)],
+            "Porção": [
+                f"{(high / 1008) * 100:.2f}%",
+                f"{(adequate / 1008) * 100:.2f}%",
+                f"{(low / 1008) * 100:.2f}%",
+            ],
         }
 
         return pd.DataFrame(data)

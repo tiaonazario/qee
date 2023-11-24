@@ -8,7 +8,9 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
+    Image,
 )
+from datetime import datetime
 
 
 class PDFTable:
@@ -31,17 +33,17 @@ class PDFTable:
         table = Table(self.data, colWidths=widths)
         style = TableStyle(
             [
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#343A40')),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('TEXTCOLOR', (0, 0), (-1, 0), HexColor('#F8F9FA')),
-                ('LINEBELOW', (0, -1), (-1, -1), 0.5, HexColor('#ADB5BD')),
-                ('LINEBEFORE', (0, 0), (0, -1), 0.5, HexColor('#ADB5BD')),
-                ('LINEAFTER', (-1, 0), (-1, -1), 0.5, HexColor('#ADB5BD')),
-                ('LINEAFTER', (0, 0), (0, -1), 0.5, HexColor('#ADB5BD')),
-                ('LINEAFTER', (0, 1), (1, -1), 0.5, HexColor('#ADB5BD')),
-                ('FONTSIZE', (0, 0), (-1, -1), 12),
-                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("BACKGROUND", (0, 0), (-1, 0), HexColor("#343A40")),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("TEXTCOLOR", (0, 0), (-1, 0), HexColor("#F8F9FA")),
+                ("LINEBELOW", (0, -1), (-1, -1), 0.5, HexColor("#ADB5BD")),
+                ("LINEBEFORE", (0, 0), (0, -1), 0.5, HexColor("#ADB5BD")),
+                ("LINEAFTER", (-1, 0), (-1, -1), 0.5, HexColor("#ADB5BD")),
+                ("LINEAFTER", (0, 0), (0, -1), 0.5, HexColor("#ADB5BD")),
+                ("LINEAFTER", (0, 1), (1, -1), 0.5, HexColor("#ADB5BD")),
+                ("FONTSIZE", (0, 0), (-1, -1), 12),
+                ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
             ]
         )
         table.setStyle(style)
@@ -54,6 +56,7 @@ class PDF:
 
     def __init__(self) -> None:
         self.elements: list[object] = []
+        self.add_header()
 
     def add(self, element: object) -> None:
         """Adiciona um elemento ao PDF"""
@@ -80,7 +83,7 @@ class PDF:
 
         if style is None:
             style = ParagraphStyle(
-                name='Normal',
+                name="Normal",
                 fontSize=12,
                 spaceAfter=12,
             )
@@ -91,13 +94,35 @@ class PDF:
         """Adiciona um título centralizado"""
 
         style = ParagraphStyle(
-            name='Heading1',
+            name="Heading1",
             fontSize=10,
             alignment=1,
             spaceAfter=6,
         )
 
         self.elements.append(Paragraph(text, style))
+
+    def add_header(self) -> None:
+        """Adiciona um cabeçalho ao PDF"""
+
+        style = ParagraphStyle(
+            name="Heading1",
+            fontName="Helvetica-Bold",
+            fontSize=12,
+            alignment=1,
+            spaceAfter=6,
+        )
+
+        data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+        elements = [
+            Image("gui/assets/ufersa.png", width=23.3 * mm, height=36 * mm),
+            Paragraph("UNIVERSIDADE FEDERAL RURAL DO SEMI-ÀRIDO", style),
+            Paragraph("RELATÓRIO DE ANÁLISE DE QEE", style),
+            Paragraph(f"Data do relatório: {data_atual}", style),
+        ]
+        self.elements += elements
+        self.add_spacer(height=24)
 
     def add_title(
         self, title: str, style: ParagraphStyle | None = None
@@ -106,8 +131,8 @@ class PDF:
 
         if style is None:
             style = ParagraphStyle(
-                name='Heading1',
-                fontName='Helvetica-Bold',
+                name="Heading1",
+                fontName="Helvetica-Bold",
                 fontSize=12,
                 spaceAfter=12,
             )
