@@ -9,13 +9,13 @@ def get_files(directory: str, extension: str = None) -> List[str]:
     """
 
     if not os.path.exists(directory):
-        print("Directory does not exist")
+        print('Directory does not exist')
         return None
 
     if extension is None:
-        extension = "*"
+        extension = '*'
 
-    pattern_fetch = os.path.join(directory, "*." + extension)
+    pattern_fetch = os.path.join(directory, '*.' + extension)
     files = glob.glob(pattern_fetch)
 
     return files

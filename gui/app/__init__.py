@@ -17,10 +17,10 @@ class CentralWidget(QWidget):
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
 
-        path_file = "..."
+        path_file = '...'
         self.data_frame = pd.DataFrame()
-        self.check_type = ""
-        self.check_values = ""
+        self.check_type = ''
+        self.check_values = ''
         self.save_graphics = False
         self.reference_voltage: VoltageValueType = 220
         self.analysis = Analysis(self.data_frame)
@@ -63,21 +63,21 @@ class CentralWidget(QWidget):
 
     def show_message(self, message: str) -> None:
         """Mostra uma mensagem na tela"""
-        self.message_box.set_option("Erro")
+        self.message_box.set_option('Erro')
         self.message_box.setText(message)
         self.message_box.exec()
 
     def open_file_dialog(self) -> None:
         """Abre o gerenciador de arquivos"""
-        filters = "Arquivos CSV (*.csv);;Arquivos XLS (*.xls);;Arquivos XLSX (*.xlsx)"
+        filters = 'Arquivos CSV (*.csv);;Arquivos XLS (*.xls);;Arquivos XLSX (*.xlsx)'
         file_result = QFileDialog.getOpenFileName(
             self,
-            "Abrir arquivo",
-            "",
+            'Abrir arquivo',
+            '',
             filter=filters,
         )
 
-        if file_result[0] == "":
+        if file_result[0] == '':
             return
 
         self.path_frame.path_edit.setText(file_result[0])
@@ -86,19 +86,19 @@ class CentralWidget(QWidget):
         """Carrega os dados do arquivo em uma tabela"""
 
         path_file = self.path_frame.path_edit.text()
-        path_file_ext = path_file.rsplit(".", maxsplit=1)[-1]
+        path_file_ext = path_file.rsplit('.', maxsplit=1)[-1]
 
         try:
-            if path_file_ext == "csv":
-                data_frame = pd.read_csv(path_file, sep=";")
+            if path_file_ext == 'csv':
+                data_frame = pd.read_csv(path_file, sep=';')
             else:
                 data_frame = pd.read_excel(path_file)
         except Exception:
-            self.show_message("Forneça uma planilha válida")
+            self.show_message('Forneça uma planilha válida')
             return
 
         if data_frame.shape[0] != 1008:
-            self.show_message("A planilha deve conter 1008 linhas")
+            self.show_message('A planilha deve conter 1008 linhas')
             return
         self.data_frame = data_frame
 
@@ -127,7 +127,7 @@ class CentralWidget(QWidget):
             )
 
             if x_axis is None:
-                self.show_message("Forneça um intervalo válido")
+                self.show_message('Forneça um intervalo válido')
                 return
 
             graphic = Graphic()
@@ -137,9 +137,9 @@ class CentralWidget(QWidget):
 
             graphic.voltage(self.reference_voltage)
             if self.save_graphics:
-                label = "_".join(voltage_labels)
-                label = label.replace(" [V]", "_")
-                graphic.save(f"waves/{label}.pdf")
+                label = '_'.join(voltage_labels)
+                label = label.replace(' [V]', '_')
+                graphic.save(f'waves/{label}.pdf')
             else:
                 graphic.show()
 
@@ -148,7 +148,7 @@ class CentralWidget(QWidget):
 
         labels = self.contents_frame.data_table.get_selected_columns()
         if len(labels) != 3:
-            self.show_message("Selecione três colunas referentes as tensões")
+            self.show_message('Selecione três colunas referentes as tensões')
             return
 
         response = self.open_voltage_dialog(True)
@@ -159,7 +159,7 @@ class CentralWidget(QWidget):
 
             self.contents_frame.add_result(
                 data,
-                f"Variação de tensão ({self.check_type}) - valores {self.check_values}",
+                f'Variação de tensão ({self.check_type}) - valores {self.check_values}',
             )
 
     def power_factor(self) -> None:
@@ -168,7 +168,7 @@ class CentralWidget(QWidget):
         label = self.contents_frame.data_table.get_selected_columns()[0]
         data = self.analysis.power_factor(label)
 
-        self.contents_frame.add_result(data, "Fator de potência")
+        self.contents_frame.add_result(data, 'Fator de potência')
 
     def harmonics(self) -> None:
         """Distorções harmonicas"""
@@ -176,7 +176,7 @@ class CentralWidget(QWidget):
         labels = self.contents_frame.data_table.get_selected_columns()
         data = self.analysis.harmonics(labels)
 
-        self.contents_frame.add_result(data, "Distorções harmonicas")
+        self.contents_frame.add_result(data, 'Distorções harmonicas')
 
     def voltage_imbalance(self) -> None:
         """Desequilíbrio de tensão"""
@@ -184,14 +184,14 @@ class CentralWidget(QWidget):
         labels = self.contents_frame.data_table.get_selected_columns()
         data = self.analysis.voltage_imbalance(labels)
 
-        self.contents_frame.add_result(data, "Desequilíbrio de tensão")
+        self.contents_frame.add_result(data, 'Desequilíbrio de tensão')
 
     def flicker(self):
         """Flutuação de tensão"""
 
         label = self.contents_frame.data_table.get_selected_columns()[0]
         data = self.analysis.flicker(label)
-        self.contents_frame.add_result(data, "Flutuação de tensão")
+        self.contents_frame.add_result(data, 'Flutuação de tensão')
 
     def frequency_variation(self) -> None:
         """Variação de frequência"""
@@ -199,4 +199,4 @@ class CentralWidget(QWidget):
         label = self.contents_frame.data_table.get_selected_columns()[0]
         data = self.analysis.frequency_variation(label)
 
-        self.contents_frame.add_result(data, "Variação de frequência")
+        self.contents_frame.add_result(data, 'Variação de frequência')

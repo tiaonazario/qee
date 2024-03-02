@@ -10,20 +10,20 @@ class Message(QMessageBox):
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
 
-        button = self.addButton("Ok", QMessageBox.ButtonRole.AcceptRole)
+        button = self.addButton('Ok', QMessageBox.ButtonRole.AcceptRole)
         button.setCursor(Qt.CursorShape.PointingHandCursor)
         button.setFixedSize(60, 30)
 
     def set_option(
-        self, option: Literal["Informação", "Aviso", "Erro", "Pergunta"]
+        self, option: Literal['Informação', 'Aviso', 'Erro', 'Pergunta']
     ) -> None:
         """Seleciona as opções"""
         self.setWindowTitle(option)
-        if option == "Aviso":
+        if option == 'Aviso':
             self.setIcon(QMessageBox.Icon.Warning)
-        elif option == "Erro":
+        elif option == 'Erro':
             self.setIcon(QMessageBox.Icon.Critical)
-        elif option == "Pergunta":
+        elif option == 'Pergunta':
             self.setIcon(QMessageBox.Icon.Question)
-        elif option == "Informação":
+        elif option == 'Informação':
             self.setIcon(QMessageBox.Icon.Information)
