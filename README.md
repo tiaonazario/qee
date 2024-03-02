@@ -1,6 +1,6 @@
 
 
-# QEE - Qualidade de Energia Elétrica
+# Qualidade de Energia Elétrica (QEE)
 
 <p align="center">
   <img src="gui/assets/qee_logo.png" alt="Logo" width="200"/>
